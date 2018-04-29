@@ -12,17 +12,12 @@
 
 #define PORT_NUMBER 9383
 
-// Helper function for error messages (not required)
-void error(const char *msg)
-{
-    perror(msg);
-    exit(1);
-}
 
 int main(int argc, char *argv[])
 {
 	// Prepare for socket communication
 	int sockfd, newsockfd, portno = PORT_NUMBER;
+	ssize_t len;
 	socklen_t clilen;
 	char buffer[256];
 	int file_size;
@@ -59,18 +54,18 @@ int main(int argc, char *argv[])
 	received_file = fopen("server.txt", "r");
     if (received_file == NULL)
         {
-                fprintf(stderr, "Failed to open file foo --> %s\n", strerror(errno));
+                fprintf(stderr, "Failed to open file foo --> %s\n", strerror(error));
 
                 exit(EXIT_FAILURE);
         }
 
         remain_data = file_size;
 
-        while (((len = recv(client_socket, buffer, BUFSIZ, 0)) > 0) && (remain_data > 0))
+        while (((len = recv(sockfd, buffer, BUFSIZ, 0)) > 0) && (remain_data > 0))
         {
                 fwrite(buffer, sizeof(char), len, received_file);
                 remain_data -= len;
-                fprintf(stdout, "Receive %d bytes and we hope :- %d bytes\n", len, remain_data);
+                fprintf(stdout, "Receive %zd bytes and we hope :- %d bytes\n", len, remain_data);
         }
 
         // closes file
@@ -89,18 +84,18 @@ int main(int argc, char *argv[])
 	received_file = fopen("server.txt", "r");
     if (received_file == NULL)
         {
-                fprintf(stderr, "Failed to open file foo --> %s\n", strerror(errno));
+                fprintf(stderr, "Failed to open file foo --> %s\n", strerror(error));
 
                 exit(EXIT_FAILURE);
         }
 
         remain_data = file_size;
 
-        while (((len = recv(client_socket, buffer, BUFSIZ, 0)) > 0) && (remain_data > 0))
+        while (((len = recv(sockfd, buffer, BUFSIZ, 0)) > 0) && (remain_data > 0))
         {
                 fwrite(buffer, sizeof(char), len, received_file);
                 remain_data -= len;
-                fprintf(stdout, "Receive %d bytes and we hope :- %d bytes\n", len, remain_data);
+                fprintf(stdout, "Receive %zd bytes and we hope :- %d bytes\n", len, remain_data);
         }
 
         // closes file
@@ -122,4 +117,10 @@ int main(int argc, char *argv[])
 	close(newsockfd);
 	close(sockfd);
     return 0; 
+}
+
+void error(const char *msg)
+{
+    perror(msg);
+    exit(1);
 }
