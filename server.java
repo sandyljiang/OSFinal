@@ -136,11 +136,13 @@ public class Server extends Thread {
     throw new Exception(message);
   }
   
-  public static void main(String[] args) {
+  public static void main(String[] args) throws FileNotFoundException,IOException {
     new Server().start();
     int syllableCount;
     String line;
+    try{
     BufferedReader reader = new BufferedReader(new FileReader(sylfile));
+
     while ((line = reader.readLine()) != null)
     {
         String[] parts = line.split(",", 2);
@@ -166,6 +168,13 @@ public class Server extends Thread {
     }
 
     reader.close();
+    
+    }
+    catch (FileNotFoundException ex)  
+    {
+       System.out.println("File doesn't exist");
+    }
+    
     while (targetCount - syllablePointer > 0){
       String word = getWord(wordsList, syllablePointer);
       if(word.length() > 0){ //change this so word exists
