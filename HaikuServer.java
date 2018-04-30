@@ -24,6 +24,7 @@ public class Server extends Thread {
  
     private void saveFile(Socket socket) throws Exception {
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+        System.out.println("Can I have a list of words you would like to include?");    
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         FileOutputStream fos = null;
         byte [] buffer = new byte[BUFFER_SIZE];
@@ -63,11 +64,49 @@ public class Server extends Thread {
         } while (bytesRead == BUFFER_SIZE);
          
         System.out.println("Thank you for the list!");
+        System.out.println("Can I have a list of words you would like to exclude?"); 
+        Object o2 = ois.readObject();
+ 
+        if (o2 instanceof String) {
+            fos = new FileOutputStream(new File("syllables.txt"));
+        } else {
+            throwException("Something is wrong");
+        }
+ 
+        // 2. Read file to the end.
+        Integer bytesRead = 0;
+ 
+        do {
+            o2 = ois.readObject();
+ 
+            if (!(o2 instanceof Integer)) {
+                throwException("Something is wrong");
+            }
+ 
+            bytesRead = (Integer)o;
+ 
+            o2 = ois.readObject();
+ 
+            if (!(o2 instanceof byte[])) {
+                throwException("Something is wrong");
+            }
+ 
+            buffer = (byte[])o2;
+ 
+            // 3. Write data to output file.
+            fos.write(buffer, 0, bytesRead);
+           
+        } while (bytesRead == BUFFER_SIZE);
          
         fos.close();
  
         ois.close();
         oos.close();
+
+        System.out.println("Here is your Haiku!");
+        // print haiku 
+
+
     }
  
     public static void throwException(String message) throws Exception {
