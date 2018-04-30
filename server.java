@@ -177,11 +177,14 @@ public class Server extends Thread {
     
     while (targetCount - syllablePointer > 0){
       String word = getWord(wordsList, syllablePointer);
-      if(word.length() > 0){ //change this so word exists
+      if(word.length() > 0){
         finishedHaiku.add(word);
         syllablePointer--;
         targetCount = targetCount - syllablePointer; 
-      } 
+      }
+      else {
+        String word = getWord(wordsList, syllablePointer + 1);
+      }
     }
     String haiku2 = printHaiku(finishedHaiku);
     haiku = haiku2.getBytes();
