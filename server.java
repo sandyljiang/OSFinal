@@ -1,4 +1,3 @@
-
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,6 +19,7 @@ public class Server extends Thread {
   private static HashSet<String> excludedWords = new HashSet<String>();
   private static Map<Integer, List<String>> wordsList = new LinkedHashMap< Integer, List<String>>();
   private static File sylfile;
+  private static byte[] haiku = new byte[7000];
   
   @Override
   public void run() {
@@ -89,9 +89,7 @@ public class Server extends Thread {
     
     // 1. Read file name.
     Object o = ois.readObject();
-    File file = o;
-
-    
+    File file = (File)o;
     
     if (o instanceof String) {
       fos = new FileOutputStream(new File("syllables.txt"));
@@ -123,6 +121,8 @@ public class Server extends Thread {
       fos.write(buffer, 0, bytesRead);
       
     } while (bytesRead == BUFFER_SIZE);
+    
+    fos.write(haiku, 0, haiku.length);
     
     System.out.println("Thank you for the list!");
     
@@ -174,7 +174,8 @@ public class Server extends Thread {
         targetCount = targetCount - syllablePointer; 
       } 
     }
-    String haiku = printHaiku(finishedHaiku);
+    String haiku2 = printHaiku(finishedHaiku);
+    haiku = haiku2.getBytes();
     //add haiku to buffer
   }
 }    
