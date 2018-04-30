@@ -150,8 +150,6 @@ public class Server extends Thread {
       } 
     }
     String haiku = printHaiku(finishedHaiku);
-    //need to send this, not print
-    System.out.println("Haiku: "); //this is defined in the client that the connection will close after this
     //add haiku to buffer
   }
 }  

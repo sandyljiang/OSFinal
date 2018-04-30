@@ -25,7 +25,7 @@ public class Client {
       ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
       
       oos.writeObject(file.getName());
-      
+      //get haiku
       FileInputStream fis = new FileInputStream(file);
       byte [] buffer = new byte[Server.BUFFER_SIZE];
       Integer bytesRead = 0;
