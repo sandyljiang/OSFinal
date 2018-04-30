@@ -1,3 +1,4 @@
+
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -18,6 +19,7 @@ public class Server extends Thread {
   private static HashSet<String> finishedHaiku = new HashSet<String>();
   private static HashSet<String> excludedWords = new HashSet<String>();
   private static Map<Integer, List<String>> wordsList = new LinkedHashMap< Integer, List<String>>();
+  private static File sylfile;
   
   @Override
   public void run() {
@@ -87,26 +89,9 @@ public class Server extends Thread {
     
     // 1. Read file name.
     Object o = ois.readObject();
+    File file = o;
 
-    Object filePath = o;
-
-    String line;
-    BufferedReader reader = new BufferedReader(new FileReader(filePath));
-    while ((line = reader.readLine()) != null)
-    {
-        String[] parts = line.split(",", 2);
-        if (parts.length >= 2)
-        {
-            String key = parts[0];
-            String value = parts[1];
-            wordsList.put(key, value);
-        } 
-      else {
-            System.out.println("ignoring line: " + line);
-        }
-    }
-
-    reader.close();
+    
     
     if (o instanceof String) {
       fos = new FileOutputStream(new File("syllables.txt"));
@@ -153,14 +138,25 @@ public class Server extends Thread {
   
   public static void main(String[] args) {
     new Server().start();
-    int syllableCount;  
-    String[] file = args[0].split(" ");
-    for(String word: file){
-      sanitizeInput(word);
-      syllableCount = 1; //make it the second entry 
-      Integer syll = new Integer(syllableCount);
-      //wordsList.add(syll, word);
+    int syllableCount;
+    String line;
+    BufferedReader reader = new BufferedReader(new FileReader(sylfile));
+    while ((line = reader.readLine()) != null)
+    {
+        String[] parts = line.split(",", 2);
+        if (parts.length >= 2)
+        {
+            String key = parts[0];
+            String value = parts[1];
+            sanitizeInput(value);
+            wordsList.put(key, value);
+        } 
+      else {
+            System.out.println("ignoring line: " + line);
+        }
     }
+
+    reader.close();
     while (targetCount - syllablePointer > 0){
       String word = getWord(wordsList, syllablePointer);
       if(word.length() > 0){ //change this so word exists
@@ -170,6 +166,8 @@ public class Server extends Thread {
       } 
     }
     String haiku = printHaiku(finishedHaiku);
+    //need to send this, not print
+    System.out.println("Haiku: "); //this is defined in the client that the connection will close after this
     //add haiku to buffer
   }
 }    
