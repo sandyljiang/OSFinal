@@ -61,7 +61,7 @@ public class Server extends Thread {
     return s;
   }
   
-  public static void add(Integer key, String newValue) {
+  public void add(Integer key, String newValue) {
     //check that word in source is not in excluded list
     if(!excludedWords.contains(newValue)){
       List<String> currentValue = wordsList.get(key);
@@ -146,13 +146,22 @@ public class Server extends Thread {
         String[] parts = line.split(",", 2);
         if (parts.length >= 2)
         {
-            String key = parts[0];
-            String value = parts[1];
-            sanitizeInput(value);
-            wordsList.put(key, value);
+          String key = parts[0];
+          String value = parts[1];
+          sanitizeInput(value);
+          Integer k = new Integer(key);
+          // wordsList.add(k, value);
+          if(!excludedWords.contains(value)){
+            List<String> currentValue = wordsList.get(k);
+            if (currentValue == null) {
+              currentValue = new ArrayList<String>();
+              wordsList.put(k, currentValue);
+            }
+            currentValue.add(value);
+          }
         } 
-      else {
-            System.out.println("ignoring line: " + line);
+        else {
+          System.out.println("ignoring line: " + line);
         }
     }
 
@@ -166,8 +175,6 @@ public class Server extends Thread {
       } 
     }
     String haiku = printHaiku(finishedHaiku);
-    //need to send this, not print
-    System.out.println("Haiku: "); //this is defined in the client that the connection will close after this
     //add haiku to buffer
   }
 }    
