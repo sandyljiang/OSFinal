@@ -3,7 +3,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
@@ -140,7 +139,7 @@ public class Server extends Thread {
       sanitizeInput(word);
       syllableCount = 1; //make it the second entry 
       Integer syll = new Integer(syllableCount);
-      wordsList.add(syll, word);
+      //wordsList.add(syll, word);
     }
     while (targetCount - syllablePointer > 0){
       String word = getWord(wordsList, syllablePointer);
