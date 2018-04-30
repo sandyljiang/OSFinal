@@ -133,7 +133,7 @@ public class Server extends Thread {
   
   public static void main(String[] args) {
     new Server().start();
-    int syllableCount;
+    int syllableCount;  
     String[] file = args[0].split(" ");;  //this is pseudocode
     for(String word: file){
       sanitizeInput(word);
