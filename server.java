@@ -75,7 +75,7 @@ public class Server extends Thread {
   
 // read in words and add to hashSet 
   public static void fillHashSet(String input){
-      String[] words = input.split(" ");
+      String[] words = input.split(",");
       for(String word: words){
         excludedWords.add(word); 
       }
