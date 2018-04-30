@@ -154,7 +154,7 @@ public class Server extends Thread {
   public static void main(String[] args) {
     new Server().start();
     int syllableCount;  
-    String[] file = args[0].split(" ");;  //this is pseudocode
+    String[] file = args[0].split(" ");
     for(String word: file){
       sanitizeInput(word);
       syllableCount = 1; //make it the second entry 
