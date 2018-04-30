@@ -1,4 +1,3 @@
-
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,6 +19,7 @@ public class Server extends Thread {
   private static HashSet<String> excludedWords = new HashSet<String>();
   private static Map<Integer, List<String>> wordsList = new LinkedHashMap< Integer, List<String>>();
   private static File sylfile;
+  private static byte[] haiku = new byte[7000];
   
   @Override
   public void run() {
@@ -61,7 +61,7 @@ public class Server extends Thread {
     return s;
   }
   
-  public static void add(Integer key, String newValue) {
+  public void add(Integer key, String newValue) {
     //check that word in source is not in excluded list
     if(!excludedWords.contains(newValue)){
       List<String> currentValue = wordsList.get(key);
@@ -75,7 +75,7 @@ public class Server extends Thread {
   
 // read in words and add to hashSet 
   public static void fillHashSet(String input){
-      String[] words = input.split(" ");
+      String[] words = input.split(",");
       for(String word: words){
         excludedWords.add(word); 
       }
@@ -89,9 +89,7 @@ public class Server extends Thread {
     
     // 1. Read file name.
     Object o = ois.readObject();
-    File file = o;
-
-    
+    File file = (File)o;
     
     if (o instanceof String) {
       fos = new FileOutputStream(new File("syllables.txt"));
@@ -124,6 +122,8 @@ public class Server extends Thread {
       
     } while (bytesRead == BUFFER_SIZE);
     
+    fos.write(haiku, 0, haiku.length);
+    
     System.out.println("Thank you for the list!");
     
     fos.close();
@@ -136,27 +136,45 @@ public class Server extends Thread {
     throw new Exception(message);
   }
   
-  public static void main(String[] args) {
+  public static void main(String[] args) throws FileNotFoundException,IOException {
     new Server().start();
     int syllableCount;
     String line;
+    try{
     BufferedReader reader = new BufferedReader(new FileReader(sylfile));
+
     while ((line = reader.readLine()) != null)
     {
         String[] parts = line.split(",", 2);
         if (parts.length >= 2)
         {
-            String key = parts[0];
-            String value = parts[1];
-            sanitizeInput(value);
-            wordsList.put(key, value);
+          String key = parts[0];
+          String value = parts[1];
+          sanitizeInput(value);
+          Integer k = new Integer(key);
+          // wordsList.add(k, value);
+          if(!excludedWords.contains(value)){
+            List<String> currentValue = wordsList.get(k);
+            if (currentValue == null) {
+              currentValue = new ArrayList<String>();
+              wordsList.put(k, currentValue);
+            }
+            currentValue.add(value);
+          }
         } 
-      else {
-            System.out.println("ignoring line: " + line);
+        else {
+          System.out.println("ignoring line: " + line);
         }
     }
 
     reader.close();
+    
+    }
+    catch (FileNotFoundException ex)  
+    {
+       System.out.println("File doesn't exist");
+    }
+    
     while (targetCount - syllablePointer > 0){
       String word = getWord(wordsList, syllablePointer);
       if(word.length() > 0){ //change this so word exists
@@ -165,9 +183,8 @@ public class Server extends Thread {
         targetCount = targetCount - syllablePointer; 
       } 
     }
-    String haiku = printHaiku(finishedHaiku);
-    //need to send this, not print
-    System.out.println("Haiku: "); //this is defined in the client that the connection will close after this
+    String haiku2 = printHaiku(finishedHaiku);
+    haiku = haiku2.getBytes();
     //add haiku to buffer
   }
 }    
