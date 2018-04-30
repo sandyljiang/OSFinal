@@ -1,0 +1,13 @@
+ him
+ hello
+ goodbye
+ apple
+ orange
+ banana
+ citrus
+ yellow
+ red
+ blue
+ black
+ white
+ green
