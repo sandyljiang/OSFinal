@@ -89,7 +89,6 @@ public class Server extends Thread {
     Object o = ois.readObject();
 
     Object filePath = o;
-    HashMap<Integer, String> map = new HashMap<Integer, String>();
 
     String line;
     BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -100,8 +99,9 @@ public class Server extends Thread {
         {
             String key = parts[0];
             String value = parts[1];
-            map.put(key, value);
-        } else {
+            wordsList.put(key, value);
+        } 
+      else {
             System.out.println("ignoring line: " + line);
         }
     }
@@ -153,7 +153,7 @@ public class Server extends Thread {
   
   public static void main(String[] args) {
     new Server().start();
-    int syllableCount;
+    int syllableCount;  
     String[] file = args[0].split(" ");;  //this is pseudocode
     for(String word: file){
       sanitizeInput(word);
@@ -170,8 +170,6 @@ public class Server extends Thread {
       } 
     }
     String haiku = printHaiku(finishedHaiku);
-    //need to send this, not print
-    System.out.println("Haiku: "); //this is defined in the client that the connection will close after this
     //add haiku to buffer
   }
-}  
+}    
