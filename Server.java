@@ -87,6 +87,26 @@ public class Server extends Thread {
     
     // 1. Read file name.
     Object o = ois.readObject();
+
+    Object filePath = o;
+
+    String line;
+    BufferedReader reader = new BufferedReader(new FileReader(filePath));
+    while ((line = reader.readLine()) != null)
+    {
+        String[] parts = line.split(",", 2);
+        if (parts.length >= 2)
+        {
+            String key = parts[0];
+            String value = parts[1];
+            wordsList.put(key, value);
+        } 
+      else {
+            System.out.println("ignoring line: " + line);
+        }
+    }
+
+    reader.close();
     
     if (o instanceof String) {
       fos = new FileOutputStream(new File("syllables.txt"));
@@ -150,6 +170,8 @@ public class Server extends Thread {
       } 
     }
     String haiku = printHaiku(finishedHaiku);
+    //need to send this, not print
+    System.out.println("Haiku: "); //this is defined in the client that the connection will close after this
     //add haiku to buffer
   }
-}  
+}    
