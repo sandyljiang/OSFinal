@@ -125,7 +125,7 @@ public class Server extends Thread {
   }
   
   public static void main(String[] args) {
-    new Server().start();
+    new Server().run();
     int syllableCount;
     String line;
     try{
