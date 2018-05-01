@@ -42,7 +42,6 @@ public class Client {
         oos.writeObject(bytesRead);
         oos.writeObject(Arrays.copyOf(buffer, buffer.length));
       }
-      
       oos.close();
       ois.close();
       fis.close();

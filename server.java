@@ -61,24 +61,12 @@ public class Server extends Thread {
     return s;
   }
   
-  public void add(Integer key, String newValue) {
-    //check that word in source is not in excluded list
-    if(!excludedWords.contains(newValue)){
-      List<String> currentValue = wordsList.get(key);
-      if (currentValue == null) {
-        currentValue = new ArrayList<String>();
-        wordsList.put(key, currentValue);
-      }
-      currentValue.add(newValue);
-    }
-  }
-  
 // read in words and add to hashSet 
   public static void fillHashSet(String input){
-      String[] words = input.split(",");
-      for(String word: words){
-        excludedWords.add(word); 
-      }
+    String[] words = input.split(",");
+    for(String word: words){
+      excludedWords.add(word); 
+    }
   }
   
   private void saveFile(Socket socket) throws Exception {
@@ -136,15 +124,15 @@ public class Server extends Thread {
     throw new Exception(message);
   }
   
-  public static void main(String[] args) throws FileNotFoundException,IOException {
+  public static void main(String[] args) {
     new Server().start();
     int syllableCount;
     String line;
     try{
-    BufferedReader reader = new BufferedReader(new FileReader(sylfile));
-
-    while ((line = reader.readLine()) != null)
-    {
+      BufferedReader reader = new BufferedReader(new FileReader(sylfile));
+      
+      while ((line = reader.readLine()) != null)
+      {
         String[] parts = line.split(",", 2);
         if (parts.length >= 2)
         {
@@ -152,7 +140,6 @@ public class Server extends Thread {
           String value = parts[1];
           sanitizeInput(value);
           Integer k = new Integer(key);
-          // wordsList.add(k, value);
           if(!excludedWords.contains(value)){
             List<String> currentValue = wordsList.get(k);
             if (currentValue == null) {
@@ -165,14 +152,17 @@ public class Server extends Thread {
         else {
           System.out.println("ignoring line: " + line);
         }
-    }
-
-    reader.close();
-    
+      }
+      
+      reader.close();
+      
     }
     catch (FileNotFoundException ex)  
     {
-       System.out.println("File doesn't exist");
+      System.out.println("File doesn't exist");
+    }
+    catch (IOException e) {
+      System.out.println("I/O doesn't exist");
     }
     
     while (targetCount - syllablePointer > 0){
@@ -183,7 +173,7 @@ public class Server extends Thread {
         targetCount = targetCount - syllablePointer; 
       }
       else {
-        String word = getWord(wordsList, syllablePointer + 1);
+        word = getWord(wordsList, syllablePointer + 1);
       }
     }
     String haiku2 = printHaiku(finishedHaiku);
